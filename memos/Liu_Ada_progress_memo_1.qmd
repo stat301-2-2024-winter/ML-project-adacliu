@@ -63,13 +63,20 @@ num_num <- sum(sapply(mushroom, is.numeric))
 print(num_cat)
 # Number of numerical variables
 print(num_num)
-```
 
+vis_miss(mushroom, warn_large_data = FALSE)
+```
+Despite the size of this dataset, there are no missingness isses.
 
 ## Potential data issues
-
-
+```{r}
+mushroom |>
+  ggplot(aes(x = class))+
+  geom_bar()
+```
+Looking at the distribution of the data, it is very slightly skewed towards edible (e). Since the data is slightly skewed, I plan to use stratified sampling for this data to make sure the poisonous (p) category is properly represented.
 
 ## Misc
 
-Blah Blah
+To meet my project deadline, I'll start by exploring the mushroom dataset to determine if it aligns with my project goals. While there are numeric variables, they are few and If I find my analysis limiting due to a lack of numerical variables and how few predictor variables there are, I'll consider looking for an alternative dataset. By the end of Feburary, I aim to complete my initial data exploration and to develop and evaluate at least one more complex model and start getting a feel for how to structure my project- this is likely memo 2. In the final week leading up to the deadline, I'll wrap up and fill out what is not done and type up my final report.
+
