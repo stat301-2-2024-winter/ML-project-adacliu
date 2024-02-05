@@ -28,14 +28,17 @@ citation-location: margin
 
 :::
 
+## Prediction Problem
+
+My prediction problem is: Can we predict whether a mushroom is edible or poisonous based on its physical characteristics? This is a classification problem. The variable to predict is the mushroom's edibility status, which can be categorized into two classes: edible (e) or poisonous (p).
+
 ## Data source
 
 I plan to do my predictive model final project using the Mushroom Classification Dataset from Kaggle
-^[Kaggle Dataset --- [Mushroom Classification](https://www.kaggle.com/datasets/uciml/mushroom-classification?resource=download)].
+^[Kaggle Dataset --- [Mushroom Classification](https://www.kaggle.com/datasets/uciml/mushroom-classification?resource=download)]. This data set was originally contributed the the UCI Machine Learning repository and contains descriptions of hypothetical samples corresponding to 23 species of gilled mushroom. Each species is classified as edible or poisonious.
 
 
 ## Why this data
-
 Blah blah blah^[another footnote]
 
 ## Data quality & complexity check
