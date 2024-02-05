@@ -39,7 +39,10 @@ I plan to do my predictive model final project using the Mushroom Classification
 
 
 ## Why this data
-Blah blah blah^[another footnote]
+
+This dataset will work well to predict if a mushroom is edible or not through a mushroom's physical characteristics. There are several motivations for pursing this problem in practicality, saftey, and personal curiosity. The ability to accurately predict whether a mushroom is edible or poisonous from easily observable characteristics could be a valuable tool for foragers, mushroom enthusiasts, and researchers. It enhances safety and knowledge in the field of mycology. Further, a reliable predictive model could potentially reduce the risk of mushroom poisoning by providing an additional tool for identifying poisonous varieties, especially with how foraging is becoming popular and mainstream.
+
+I am personally interested in this since I have little experience with mushrooms in the wild but I enjoy cooking with them a lot. However, I have noticed that out of the thousands and thousands of mushroom species, we only eat around 5 on the daily. While I am not in the foraging community, I have seen posts come up about identifying mushrooms and finding it really interesting how people depend on what they look like to know if they are safe or not. Further, my parents come from China which has a rich history of using mushrooms in traditional medicine which has always made me wonder how people discovered their medicinal properties and how they learned which ones were safe, which ones were deadly, and which ones were medically helpful in specific doses.
 
 ## Data quality & complexity check
 
