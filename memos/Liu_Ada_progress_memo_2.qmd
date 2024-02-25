@@ -39,7 +39,7 @@ library(knitr)
 ```
 
 ```{r}
-mushrooms <- read_csv('mushrooms.csv', show_col_types = FALSE)
+mushrooms <- read_csv('../data/raw_data/mushrooms.csv', show_col_types = FALSE)
 ```
 
 ```{r}
