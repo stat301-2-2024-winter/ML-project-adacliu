@@ -180,7 +180,7 @@ bivariate_analysis(train.data, 'gill-attachment')
 
 ### Resampling method and Hyperparameter tuning
 
-To obtain a grid of parameters that produce better performance, a 5-fold cross validation will be done where the train data will be split iteratively five times and in each time, it is split into 5-folds where four-fifth will be used for training and the rest one-fifth for validation. Optimisation will be based on accuracy. After that, the optimal parameters will be used to fit the whole train data set and evaluated on the heldout test data set.
+To obtain a grid of parameters that produce better performance, a 5-fold cross validation will be done where the train data will be split iteratively five times and in each time, it is split into 5-folds where four-fifth will be used for training and the rest one-fifth for validation. Optimization will be based on accuracy. After that, the optimal parameters will be used to fit the whole train data set and evaluated on the heldout test data set.
 
 ### Model Development, Evaluation and Selection
 
