@@ -91,12 +91,14 @@ bivariate_analysis <- function(data, varname){
 
 # population
 bivariate_analysis(train.data, 'population')
-
-# population
 bivariate_analysis(train.data, 'habitat')
-
 bivariate_analysis(train.data, 'stalk-shape')
-
+bivariate_analysis(train.data, 'odor')
+bivariate_analysis(train.data, 'cap-shape')
+bivariate_analysis(train.data, 'cap-surface')
+bivariate_analysis(train.data, 'bruises') +
+  scale_x_discrete(labels=c('No', 'Yes'))
+bivariate_analysis(train.data, 'gill-attachment')
 
 
 
