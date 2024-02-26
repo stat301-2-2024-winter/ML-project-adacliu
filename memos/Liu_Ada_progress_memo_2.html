@@ -75,44 +75,82 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<div class="callout callout-style-default callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
+<i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Github Repo Link
+GitHub Repo
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><a href="https://github.com/stat301-2-2024-winter/final-project-2-adacliu.git">https://github.com/stat301-2-2024-winter/final-project-2-adacliu.git</a></p>
+<p><a href="https://github.com/stat301-2-2024-winter/final-project-2-adacliu.git" class="uri">https://github.com/stat301-2-2024-winter/final-project-2-adacliu.git</a></p>
+</div>
 </div>
 </div>
 <section id="analysis-plan" class="level2">
 <h2 class="anchored" data-anchor-id="analysis-plan">Analysis Plan</h2>
 <section id="data-splitting" class="level3">
 <h3 class="anchored" data-anchor-id="data-splitting">Data Splitting</h3>
-<p>In this section, the data set will be split into train and test data sets. The train data will be used to develop predictive models while their performance will be evaluated on the test data. Splitting will be done in a stratified manner (80/20 ratio) by maintaining almost equal fraction of samples for the two classes in both the train and test data sets. However, firstly, we will load in the packages that will be used.</p>
-</section>
-<section id="data-exploration-and-preprocessing" class="level3">
-<h3 class="anchored" data-anchor-id="data-exploration-and-preprocessing">Data Exploration and Preprocessing</h3>
+<p>In this section, the <a href="https://www.kaggle.com/datasets/uciml/mushroom-classification?resource=download">data set</a> will be split into train and test data sets. The train data will be used to develop predictive models while their performance will be evaluated on the test data. Splitting will be done in a stratified manner (80/20 ratio) by maintaining almost equal fraction of samples for the two classes in both the train and test data sets. However, firstly, we will load in the packages that will be used.</p>
 <p>Before the classification models are developed, data exploration will be performed to detect any possible issues with the data set. Here, the split train data will be used, while any possible issues discovered will be applied on both the train and test data using the data preprocessing recipes that will be created.</p>
-<p>Two different recipes will be created. These recipes will contain pipelines for data preprocessing. This is because the variables are in a format not suitable for analysis, hence we need to preprocess them. One recipe will be used for logistic regression. This recipe will have the categorical variables transformed as numerical variables (dummy variables) where one category from all categorical variables will be used as reference since logistic regression requires that. The other recipe, will have categorical variables one-hot encoded where each category will be a binary variable, where 1 is used to represent its presence and 0, its absence. In both recipes, variables with two categories will be converted to binary variables, where 1 will be used to represent the presence of a category and 0, its absence.</p>
-</section>
-<section id="resampling-method-and-hyperparameter-tuning" class="level3">
-<h3 class="anchored" data-anchor-id="resampling-method-and-hyperparameter-tuning">Resampling method and Hyperparameter tuning</h3>
-<p>To obtain a grid of parameters that produce better performance, a 5-fold cross validation will be done where the train data will be split iteratively five times and in each time, it is split into 5-folds where four-fifth will be used for training and the rest one-fifth for validation. Optimisation will be based on accuracy. After that, the optimal parameters will be used to fit the whole train data set and evaluated on the heldout test data set.</p>
 </section>
 <section id="model-development-evaluation-and-selection" class="level3">
 <h3 class="anchored" data-anchor-id="model-development-evaluation-and-selection">Model Development, Evaluation and Selection</h3>
-<p>Six classification models, k-nearest neighbours (baseline model), unpenalized logistic regression, penalized logistic regression, support vector machines, random forests and xgboost. Classification models will be used in this project because the aim is to distinguish mushrooms into two: edible and poisonous based on their physical traits.</p>
-<p>To ascertain the model’s performance, the accuracy metric will be used. Other evaluation metrics such as recall, precision, area-under-the-receiver’s operating characteristics, specificity and F1 will be used. After the performance of the models have been evaluated, classification model with the best accuracy will be selected as the best model</p>
+<section id="model-types" class="level4">
+<h4 class="anchored" data-anchor-id="model-types">Model Types</h4>
+<p>Six classification models wii be used. They include:</p>
+<ul>
+<li><p>Naive Bayes (baseline model)</p></li>
+<li><p>Unpenalized logistic regression</p></li>
+<li><p>Ridge logistic regression</p></li>
+<li><p>Decision trees</p></li>
+<li><p>Random forests</p></li>
+<li><p>Gradient boosting (Xgboost).</p></li>
+</ul>
+<p>Classification models will be used in this project because the aim is to distinguish mushrooms into two: edible and poisonous based on their physical traits.</p>
+</section>
+<section id="resampling-method" class="level4">
+<h4 class="anchored" data-anchor-id="resampling-method">Resampling method</h4>
+<p>The cross-validation resampling method will be used. First, two resamples of the data set will be created, one will be used for tuning hyperparameters to reduce overfitting and the other will be used to determine the model’s performance using the optimal parameters. Obtaining better performance will be based on accuracy. Also, the optimal parameters will be used to fit the whole train data set and evaluated on the heldout test data set.</p>
+<p>To ascertain the model’s performance, the accuracy metric will be used. This is because both class proportion is almost similar (51.8% edible and 48.2% poisonous). Other evaluation metrics such as recall, precision, area-under-the-receiver’s operating characteristics, specificity and F1 will be used also. After the performance of the models have been evaluated, classification model with the best accuracy will be selected as the best model.</p>
+</section>
+<section id="recipes" class="level4">
+<h4 class="anchored" data-anchor-id="recipes">Recipes</h4>
+<p>Two different recipes will be created. These recipes will contain pipelines for data preprocessing. This is because the variables are in a format not suitable for analysis, hence we need to preprocess them. One recipe will be used for logistic regression. This recipe will have the categorical variables transformed as numerical variables (dummy variables) where one category from all categorical variables will be used as reference since logistic regression requires that. The other recipe, will have categorical variables one-hot encoded where each category will be a binary variable, where 1 is used to represent its presence and 0, its absence. In both recipes, other data preprocessing and feature engineering steps to be taken include, converting data types from string to factor type, removing variables with one unique value, creating a binary variable <em>bad_smell</em> which indicates mushrooms with a bad smell and replacing the missing value (?) in the <em>stalk_root</em> variable with ‘unk’ to indicate that it is unknown.</p>
+<p>Additionally, one more recipe will be created. This recipe will contain the data preprocessing steps outlined in the previous recipes but as an addition contain selected important features obtained from a fitted decision tree. This new recipe will be used by the classification models to fit the training data and performance evaluated on the test data.</p>
+</section>
+<section id="model-performance-table" class="level4">
+<h4 class="anchored" data-anchor-id="model-performance-table">Model Performance Table</h4>
+<table class="table">
+<caption><strong><em>Table 1: Model Performance</em></strong></caption>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Accuracy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Naive Bayes</td>
+<td>0.972</td>
+</tr>
+<tr class="even">
+<td>Logistic Regression</td>
+<td>0.999</td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 </section>
 <section id="current-status-and-next-steps" class="level2">
 <h2 class="anchored" data-anchor-id="current-status-and-next-steps">Current Status and Next steps</h2>
-<p>Currently, data splitting into train and test data is completed; data exploration is ongoing. So far, potential data issues have been found. One is the encoding of missing values as “?” and this is found in one variable. Additionally, some variables have been identified from which new variables can be generated.</p>
-<p>After exploration, data preprocessing will take place and this, alongside data exploration, would be completed in about 2 days. Next steps after data exploration and preprocessing would be to model development, evaluation and selection. This is estimated to take about 2-3 weeks. This is because this is an iterative process.</p>
+<p>Currently, data splitting into train and test data and data exploration are completed. So far, potential data issues have been found. One is the encoding of missing values as “?” and this is found in one variable. Additionally, all predictors are categorical, one variable <em>veil-type</em> has only one unique category in it. Also, some variables were identified from which new variables can be generated.</p>
+<p>Baseline (naive Bayes) and logistic regression models have been fit and evaluated on resamples. An issue seen is the almost perfect accuracy obtained by logistic regression. Next steps are to complete the other four classification models, evaluate performance, feature selection and hyperparameter tuning to obtain optimal parameters for models with tunable parameters. Finally, the best model will be selected based on accuracy.</p>
 </section>
 
 </main>

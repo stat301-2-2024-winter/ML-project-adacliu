@@ -9,53 +9,53 @@ format: html
 editor: visual
 engine: knitr
 ---
+::: {.callout-note collapse="true"}
+## GitHub Repo
 
-::: {.callout-tip icon=false}
-
-## Github Repo Link
-
-[https://github.com/stat301-2-2024-winter/final-project-2-adacliu.git](https://github.com/stat301-2-2024-winter/final-project-2-adacliu.git)
-
+<https://github.com/stat301-2-2024-winter/final-project-2-adacliu.git>
 :::
 
 ## Analysis Plan
 
 ```{r setup}
-knitr::opts_chunk$set(message = FALSE, warning = FALSE, echo = FALSE, eval=FALSE)
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, echo = FALSE, eval=F)#, eval=FALSE
 
 ```
 
 ### Data Splitting
 
-In this section, the data set will be split into train and test data sets. The train data will be used to develop predictive models while their performance will be evaluated on the test data. Splitting will be done in a stratified manner (80/20 ratio) by maintaining almost equal fraction of samples for the two classes in both the train and test data sets. However, firstly, we will load in the packages that will be used.
+In this section, the [data set](https://www.kaggle.com/datasets/uciml/mushroom-classification?resource=download) will be split into train and test data sets. The train data will be used to develop predictive models while their performance will be evaluated on the test data. Splitting will be done in a stratified manner (80/20 ratio) by maintaining almost equal fraction of samples for the two classes in both the train and test data sets. However, firstly, we will load in the packages that will be used.
+
+Before the classification models are developed, data exploration will be performed to detect any possible issues with the data set. Here, the split train data will be used, while any possible issues discovered will be applied on both the train and test data using the data preprocessing recipes that will be created.
 
 ```{r warning=FALSE, message=FALSE}
 library(tidymodels)
 library(tidyverse)
-library(kknn)
 library(xgboost)
 library(ranger)
+library(janitor)
+library(klaR)
+library(discrim)
 library(knitr)
 ```
 
 ```{r}
-mushrooms <- read_csv('../data/raw_data/mushrooms.csv', show_col_types = FALSE)
+mushrooms <- read_csv('mushrooms.csv', show_col_types = FALSE) %>% 
+  janitor::clean_names()
 ```
 
 ```{r}
 # splitting into train and test
 set.seed(202402)
+
 data_split <- initial_split(mushrooms, prop = 0.8, strata = 'class')
 
 train.data <- training(data_split)
 test.data <- testing(data_split)
+
+# fold data
+cv_fold1 <- vfold_cv(train.data, v=5, strata = 'class')
 ```
-
-### Data Exploration and Preprocessing
-
-Before the classification models are developed, data exploration will be performed to detect any possible issues with the data set. Here, the split train data will be used, while any possible issues discovered will be applied on both the train and test data using the data preprocessing recipes that will be created.
-
-Two different recipes will be created. These recipes will contain pipelines for data preprocessing. This is because the variables are in a format not suitable for analysis, hence we need to preprocess them. One recipe will be used for logistic regression. This recipe will have the categorical variables transformed as numerical variables (dummy variables) where one category from all categorical variables will be used as reference since logistic regression requires that. The other recipe, will have categorical variables one-hot encoded where each category will be a binary variable, where 1 is used to represent its presence and 0, its absence. In both recipes, variables with two categories will be converted to binary variables, where 1 will be used to represent the presence of a category and 0, its absence.
 
 ```{r}
 # data exploration
@@ -96,7 +96,7 @@ mushrooms %>%
 
 ```{r}
 # frequency distributions of categorical variables
-map(mushrooms, function(x) table(x))
+map(mushrooms, function(x) 100*prop.table(table(x)))
 ```
 
 ```{r}
@@ -112,7 +112,7 @@ bivariate_analysis <- function(data, varname){
   p <- df %>%
     ggplot(aes(.data[[varname]], n, fill=class))
   
-  if (length(unique(data[[varname]])) == 2){
+  if (length(unique(data[[varname]])) <= 4){
     p <- p +
       geom_col(position = position_stack(vjust = 1), width = 0.5)
     } else {
@@ -122,7 +122,7 @@ bivariate_analysis <- function(data, varname){
   
     p + 
       geom_text(aes(label=paste0(round(100*frac,1),'%')), 
-                col='white', size=3,
+                col='black', size=3, alpha=0.7,
                 position = position_stack(vjust=0.85)) +
       theme_bw() +
       theme(panel.grid = element_blank(), 
@@ -147,49 +147,239 @@ bivariate_analysis(train.data, 'population')
 ```
 
 ```{r}
-# population
+# habitat
 bivariate_analysis(train.data, 'habitat')
 ```
 
 ```{r}
 # stalk shape
-bivariate_analysis(train.data, 'stalk-shape')
+bivariate_analysis(train.data, 'stalk_shape') +
+  scale_x_discrete(labels=c('enlarging', 'tapering'))
 ```
 
 ```{r}
 # odor
-bivariate_analysis(train.data, 'odor')
+bivariate_analysis(train.data, 'odor') +
+  scale_x_discrete(labels=c('almond', 'creosote', 'foul', 'anise', 'musty', 
+                            'none', 'pungent', 'spicy', 'fishy'))
 ```
 
 ```{r}
-bivariate_analysis(train.data, 'cap-shape')
+bivariate_analysis(train.data, 'cap_shape') +
+  scale_x_discrete(labels=c('bell', 'conical', 'flat', 
+                            'knobbed', 'sunken', 'convex'))
 ```
 
 ```{r}
-bivariate_analysis(train.data, 'cap-surface')
+bivariate_analysis(train.data, 'cap_surface') +
+  scale_x_discrete(labels=c('fibrous', 'grooves', 'smooth', 'scaly'))
 ```
 
 ```{r}
 bivariate_analysis(train.data, 'bruises') +
-  scale_x_discrete(labels=c('No', 'Yes'))
+  scale_x_discrete(labels=c('no', 'yes'))
 ```
 
 ```{r}
-bivariate_analysis(train.data, 'gill-attachment')
+bivariate_analysis(train.data, 'gill_attachment') +
+  scale_x_discrete(labels=c('attached', 'free'))
 ```
 
-### Resampling method and Hyperparameter tuning
+```{r}
+# stalk root
+bivariate_analysis(train.data, 'stalk_root')
+```
 
-To obtain a grid of parameters that produce better performance, a 5-fold cross validation will be done where the train data will be split iteratively five times and in each time, it is split into 5-folds where four-fifth will be used for training and the rest one-fifth for validation. Optimization will be based on accuracy. After that, the optimal parameters will be used to fit the whole train data set and evaluated on the heldout test data set.
+```{r}
+# gill spacing
+bivariate_analysis(train.data , 'gill_spacing') +
+  scale_x_discrete(labels=c('close', 'crowded'))
+```
+
+```{r}
+# gill size
+bivariate_analysis(train.data , 'gill_size') +
+  scale_x_discrete(labels=c('Broad', 'Narrow'))
+```
+
+```{r}
+# stalk-surface-below-ring
+bivariate_analysis(train.data , 'stalk_surface_below_ring')+
+  scale_x_discrete(labels=c('fibrous', 'silky', 'smooth', 'scaly'))
+```
+
+```{r}
+# ring number
+bivariate_analysis(train.data, 'ring_number') +
+  scale_x_discrete(labels=c('zero', 'one', 'two'))
+```
+
+```{r}
+# stalk-surface-above-ring
+bivariate_analysis(train.data , 'stalk_surface_above_ring')+
+  scale_x_discrete(labels=c('fibrous', 'silky', 'smooth', 'scaly'))
+```
 
 ### Model Development, Evaluation and Selection
 
-Six classification models, k-nearest neighbours (baseline model), unpenalized logistic regression, penalized logistic regression, support vector machines, random forests and xgboost. Classification models will be used in this project because the aim is to distinguish mushrooms into two: edible and poisonous based on their physical traits.
+#### Model Types
 
-To ascertain the model's performance, the accuracy metric will be used. Other evaluation metrics such as recall, precision, area-under-the-receiver's operating characteristics, specificity and F1 will be used. After the performance of the models have been evaluated, classification model with the best accuracy will be selected as the best model
+Six classification models wii be used. They include:
+
+-   Naive Bayes (baseline model)
+
+-   Unpenalized logistic regression
+
+-   Ridge logistic regression
+
+-   Decision trees
+
+-   Random forests
+
+-   Gradient boosting (Xgboost).
+
+Classification models will be used in this project because the aim is to distinguish mushrooms into two: edible and poisonous based on their physical traits.
+
+#### Resampling method
+
+The cross-validation resampling method will be used. First, two resamples of the data set will be created, one will be used for tuning hyperparameters to reduce overfitting and the other will be used to determine the model's performance using the optimal parameters. Obtaining better performance will be based on accuracy. Also, the optimal parameters will be used to fit the whole train data set and evaluated on the heldout test data set.
+
+To ascertain the model's performance, the accuracy metric will be used. This is because both class proportion is almost similar (51.8% edible and 48.2% poisonous). Other evaluation metrics such as recall, precision, area-under-the-receiver's operating characteristics, specificity and F1 will be used also. After the performance of the models have been evaluated, classification model with the best accuracy will be selected as the best model.
+
+#### Recipes
+
+Two different recipes will be created. These recipes will contain pipelines for data preprocessing. This is because the variables are in a format not suitable for analysis, hence we need to preprocess them. One recipe will be used for logistic regression. This recipe will have the categorical variables transformed as numerical variables (dummy variables) where one category from all categorical variables will be used as reference since logistic regression requires that. The other recipe, will have categorical variables one-hot encoded where each category will be a binary variable, where 1 is used to represent its presence and 0, its absence. In both recipes, other data preprocessing and feature engineering steps to be taken include, converting data types from string to factor type, removing variables with one unique value, creating a binary variable *bad_smell* which indicates mushrooms with a bad smell and replacing the missing value (?) in the *stalk_root* variable with 'unk' to indicate that it is unknown.
+
+Additionally, one more recipe will be created. This recipe will contain the data preprocessing steps outlined in the previous recipes but as an addition contain selected important features obtained from a fitted decision tree. This new recipe will be used by the classification models to fit the training data and performance evaluated on the test data.
+
+```{r}
+# defining recipes
+predictors = names(train.data[, -1])
+
+binary_trans <- function(x){
+  unique_vals <- unique(x)
+  if (length(unique_vals) == 2 & (is.character(x)|is.factor(x))){
+    x <- ifelse(x == unique_vals[1], 1, 0)
+    x
+  } else{
+    x
+  }
+}
+
+# for logistic regression
+rec1 <- recipe(class ~ ., data = train.data) %>% 
+  step_mutate(across(all_of(predictors), binary_trans)) %>%
+  step_mutate(bruises = 1*bruises, 
+              bad_smell = ifelse(odor %in% c('c','y','f','p','s','m'), 1, 0),
+              stalk_root = str_replace(stalk_root, '\\?', 'unk')
+              ) %>%
+  step_string2factor(all_nominal_predictors()) %>%
+  step_zv(all_predictors()) %>% 
+  step_dummy(all_nominal_predictors(), one_hot = F)
+
+
+# for other types
+rec2 <- recipe(class ~ ., data = train.data) %>% 
+  step_mutate(across(all_of(predictors), binary_trans)) %>%
+  step_mutate(bruises = 1*bruises, 
+              bad_smell = ifelse(odor %in% c('c','y','f','p','s','m'), 1, 0),
+              `stalk_root` = str_replace(stalk_root, '\\?', 'unk')
+              ) %>%
+  step_string2factor(all_nominal_predictors()) %>%
+  step_zv(all_predictors()) %>% 
+  step_dummy(all_nominal_predictors(), one_hot = T)
+```
+
+```{r}
+# baseline model (Naive Bayes)
+set.seed(202402)
+# define workflow
+nb_wf <-  workflow() %>%
+  add_recipe(rec2) %>%
+  add_model(naive_Bayes())
+
+
+nb_wf %>%
+  fit_resamples(cv_fold1, 
+                control=control_resamples(save_pred = T, save_workflow = T), 
+                metrics=metric_set(accuracy, mn_log_loss)) %>%
+  collect_metrics()
+```
+
+```{r}
+# logistic regression
+set.seed(202402)
+logreg_wf <- workflow() %>%
+  add_recipe(rec1) %>%
+  add_model(logistic_reg(mode='classification', engine='glmnet', 
+                         mixture = 0, penalty=0))
+
+
+logreg_wf %>%
+  fit_resamples(cv_fold1, 
+                control=control_resamples(save_pred = T), 
+                metrics=metric_set(accuracy, mn_log_loss)) %>%
+  collect_metrics()
+```
+
+```{r}
+# penalised linear regression
+```
+
+```{r}
+# decision tree model
+```
+
+```{r}
+# random forest
+```
+
+```{r}
+# xgboost
+```
+
+```{r}
+# selected features from decision tree
+selected_features <- c()
+```
+
+```{r}
+# create new recipes by selecting important features from decision tree
+rec3 <- rec2 %>%
+  step_select(class, all_of(selected_features))
+```
+
+```{r}
+# logistic regression
+```
+
+```{r}
+# penalised linear regression (ridge)
+```
+
+```{r}
+# decision tree model
+```
+
+```{r}
+# random forest
+```
+
+```{r}
+# xgboost
+```
+
+#### Model Performance Table
+
+| Model               | Accuracy |
+|---------------------|----------|
+| Naive Bayes         | 0.972    |
+| Logistic Regression | 0.999    |
+
+: ***Table 1: Model Performance***
 
 ## Current Status and Next steps
 
-Currently, data splitting into train and test data is completed; data exploration is ongoing. So far, potential data issues have been found. One is the encoding of missing values as "?" and this is found in one variable. Additionally, some variables have been identified from which new variables can be generated.
+Currently, data splitting into train and test data and data exploration are completed. So far, potential data issues have been found. One is the encoding of missing values as "?" and this is found in one variable. Additionally, all predictors are categorical, one variable *veil-type* has only one unique category in it. Also, some variables were identified from which new variables can be generated.
 
-After exploration, data preprocessing will take place and this, alongside data exploration, would be completed in about 2 days. Next steps after data exploration and preprocessing would be to model development, evaluation and selection. This is estimated to take about 2-3 weeks. This is because this is an iterative process.
+Baseline (naive Bayes) and logistic regression models have been fit and evaluated on resamples. An issue seen is the almost perfect accuracy obtained by logistic regression. Next steps are to complete the other four classification models, evaluate performance, feature selection and hyperparameter tuning to obtain optimal parameters for models with tunable parameters. Finally, the best model will be selected based on accuracy.
