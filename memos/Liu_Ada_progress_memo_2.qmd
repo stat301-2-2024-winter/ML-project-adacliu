@@ -10,9 +10,9 @@ editor: visual
 engine: knitr
 ---
 
-::: {.callout-note collapse="true"}
-## GitHub Repo
+::: {.callout-tip icon=false}
 
+## Github Repo Link
 
 [https://github.com/stat301-2-2024-winter/final-project-2-adacliu.git](https://github.com/stat301-2-2024-winter/final-project-2-adacliu.git)
 
