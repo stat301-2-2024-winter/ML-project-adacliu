@@ -12,7 +12,8 @@ engine: knitr
 ::: {.callout-note collapse="true"}
 ## GitHub Repo
 
-<https://github.com/stat301-2-2024-winter/final-project-2-adacliu.git>
+[https://github.com/stat301-2-2024-winter/final-project-2-adacliu.git](https://github.com/stat301-2-2024-winter/final-project-2-adacliu.git)
+
 :::
 
 ## Analysis Plan
