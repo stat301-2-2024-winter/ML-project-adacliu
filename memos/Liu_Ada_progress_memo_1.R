@@ -1,4 +1,4 @@
-mushroom <- read.csv("./data/raw_data/mushrooms.csv")
+mushroom <- read.csv("./data/mushrooms.csv")
 
 library(tidyverse)
 library(naniar)

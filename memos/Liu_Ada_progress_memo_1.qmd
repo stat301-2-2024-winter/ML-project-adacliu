@@ -54,7 +54,7 @@ I am personally interested in this since I have little experience with mushrooms
 This dataset has been consistently used by people to conduct research with and is hosted by reliable sources. This dataset has a wide variety of variables for me to chooose from. There are 23 total variables. There are numerica variables present after reading the overview provided on the website, however, the numeric variables are coded as a factor. Therefore, when running an overview, it shows that there are 23 categorical variables and 0 numeric. This will be addressed and fixed in data cleaning. There are 8125 total observations which makes this a good sized dataset.
 
 ```{r}
-mushroom <- read.csv("../data/raw_data/mushrooms.csv")
+mushroom <- read.csv("../data/mushrooms.csv")
 # Number of rows
 nrow(mushroom)
 num_cat <- sum(sapply(mushroom, is.factor) | sapply(mushroom, is.character))
