@@ -1,23 +1,43 @@
-# Define and fit ...
+rm(list=ls())
 
-# load packages ----
-library(tidyverse)
+# load packages
 library(tidymodels)
+library(tidyverse)
+library(klaR)
+library(discrim)
 library(here)
 
-# handle common conflicts
+
+# handle conflicts
 tidymodels_prefer()
 
-# load training data
+# load initial split and recipes
+load(here('results', 'initial_split.Rdata'))
+load(here('results', 'recipes.Rdata'))
 
-# load pre-processing/feature engineering/recipe
 
-# model specifications 
 
-# define workflows
 
-# hyperparameter tuning values 
+# baseline model (Naive Bayes)
+set.seed(202402)
 
-# fit workflows/models
+# define workflow
+nb_wf <-  workflow() %>%
+  add_recipe(rec2) %>%
+  add_model(naive_Bayes())
 
-# write out results (fitted/trained workflows)
+
+metrics= metric_set(accuracy, recall, precision,
+                    specificity, f_meas, roc_auc)
+
+nb_fit <- nb_wf %>%
+  fit_resamples(cv_fold1, 
+                control=control_resamples(save_pred = T, save_workflow = T), 
+                metrics=metrics)
+
+nb_fit_metrics <-  nb_fit %>%
+  collect_metrics()
+
+
+
+save(nb_wf, nb_fit, nb_fit_metrics, file='results/baseline.Rdata')
