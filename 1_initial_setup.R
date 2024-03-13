@@ -1,3 +1,4 @@
+
 # initial data checks, data splitting & data folding
 
 # loading packages
@@ -11,7 +12,7 @@ library(here)
 tidymodels_prefer()
 
 # load data
-mushrooms <- read_csv(here('data/mushrooms.csv'), show_col_types = FALSE) %>% 
+mushrooms <- read_csv(here('mushrooms.csv'), show_col_types = FALSE) %>% 
   janitor::clean_names()
 
 
@@ -49,7 +50,6 @@ mushrooms %>%
   scale_y_continuous(breaks=seq(0, 5000, 500)) +
   labs(x='Mushroom class', y='Frequency\n') +
   ggtitle(label='Target Distribution')
-
 
 
 
@@ -108,7 +108,6 @@ bivariate_analysis <- function(data, varname){
     ggtitle(label=paste0(str_to_title(varname),' Distribution by class'))
   
 }
-
 
 
 # population
