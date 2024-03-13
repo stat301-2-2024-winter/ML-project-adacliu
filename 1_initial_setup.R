@@ -12,7 +12,7 @@ library(here)
 tidymodels_prefer()
 
 # load data
-mushrooms <- read_csv(here('mushrooms.csv'), show_col_types = FALSE) %>% 
+mushrooms <- read_csv(here('data/mushrooms.csv'), show_col_types = FALSE) %>% 
   janitor::clean_names()
 
 
