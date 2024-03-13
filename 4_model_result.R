@@ -69,7 +69,7 @@ resample_results <- bind_rows(
 
 # from lasso
 resample_results_l <- list(baseline=nb_wf, logistic=logreg_wf, ridge=ridge_wf, 
-     dtree=dt_wf, rf=rf_wf, xgb=boost_wf) %>%
+                           dtree=dt_wf, rf=rf_wf, xgb=boost_wf) %>%
   # remove recipe
   map(remove_recipe) %>%
   # add new recipe
@@ -86,7 +86,7 @@ resample_results_l <- list(baseline=nb_wf, logistic=logreg_wf, ridge=ridge_wf,
 
 # from decision tree
 resample_results_d <- list(baseline=nb_wf, logistic=logreg_wf, ridge=ridge_wf, 
-                          dtree=dt_wf, rf=rf_wf, xgb=boost_wf) %>%
+                           dtree=dt_wf, rf=rf_wf, xgb=boost_wf) %>%
   # remove recipe
   map(remove_recipe) %>%
   # add new recipe
@@ -121,7 +121,7 @@ resample_results_r <- list(baseline=nb_wf, logistic=logreg_wf, ridge=ridge_wf,
 
 # using whole data
 test_results_w <- list(baseline=nb_wf, logistic=logreg_wf, ridge=ridge_wf, 
-                     dtree=dt_wf, rf=rf_wf, xgb=boost_wf) %>%
+                       dtree=dt_wf, rf=rf_wf, xgb=boost_wf) %>%
   map(last_fit, split=data_split, metrics=metrics) %>%
   map_df(collect_metrics, .id='model')  %>%
   # select model, .metric and .estimate
@@ -133,7 +133,7 @@ test_results_w <- list(baseline=nb_wf, logistic=logreg_wf, ridge=ridge_wf,
 
 # On features selected by Lasso
 test_results_l <- list(baseline=nb_wf, logistic=logreg_wf, ridge=ridge_wf, 
-                     dtree=dt_wf, rf=rf_wf, xgb=boost_wf) %>%
+                       dtree=dt_wf, rf=rf_wf, xgb=boost_wf) %>%
   # remove recipe
   map(remove_recipe) %>%
   # add new recipe
