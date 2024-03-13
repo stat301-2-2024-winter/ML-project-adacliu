@@ -1,0 +1,19 @@
+## Executive Summary: Predicting Mushroom Edibility
+
+# Overview and Purpose
+
+My project seeks to develop predictive models to accurately classify mushrooms as edible or poisonous based on their physical characteristics. The motivation behind this project stems from the vast health benefits of mushrooms, the risks associated with consuming poisonous varieties, and a personal interest in mushroom foraging.
+
+Utilizing a dataset from Kaggle, originally contributed by the UCL Machine Learning repository, I analyzed 8,124 hypothetical mushroom samples representing 23 species. The dataset, which is primarily categorical, underwent thorough preprocessing, including handling missing values and encoding categorical variables. The data was split using a stratified selection method, with an 80/20 ratio for training and test sets, respectively.
+
+# Key Points
+
+
+
+# Major Results
+
+# Conclusions
+
+In this project, I investigated the capabilities machine learning models offer in mushroom foraging to identify safe and non-safe mushrooms. We started by splitting our data into train and test sets; building models using the train data and evaluating their performance on the test data. Data preprocessing steps were done to prepare the data for analysis. A new feature *bad_smell* was created to group odors that indicate bad smell and those that do not. Six machine learning models were fit and evaluated on different subsets of features selected by three models. From the results, all six models performed rather very well when all variables were used and when features from random forests were used. Rather, the baseline model (naive Bayes), performed rather poorly when the features from lasso regression and decision trees were used.
+
+The random forest model was chosen as the best model based on its superiority over decision trees and its robust nature in controlling overfitting since the predictions from different trees are averaged before a class is assigned to an instance. In addition, from the feature importance plot, we see that the odor of a mushroom is one physical characteristic that determines its edibility. Others include gill size, color, and spacing, stalk surface below and above the ring, the ring type, habitat, the spore print color, bruises and stalk shape.

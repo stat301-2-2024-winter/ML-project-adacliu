@@ -1,0 +1,217 @@
+---
+title: "Predicting Mushroom Edibility: A Machine Learning Approach"
+subtitle: |
+  | Final Project
+  | Data Science 2 with R (STAT 301-2)
+author: "Ada Liu"
+date: "February 22, 2024"
+format: 
+  html:
+    toc: true
+    embed-resources: true
+    toc-title: __Contents__
+    fontsize: 1.01em
+    smooth-scroll: true
+    toc-expand: true
+    toc-depth: 2
+    linestretch: 1.5
+editor: visual
+---
+
+::: {.callout-note collapse="true"}
+## GitHub Repo
+
+<https://github.com/stat301-2-2024-winter/final-project-2-adacliu.git>
+:::
+
+## Introduction
+
+This project is aimed at developing predictive models to predict mushrooms into edible and non-edible ones based on their physical characteristics. This is motivated by the health and medicinal benefits of mushrooms as good sources of rich essential nutrients such as proteins, vitamins, minerals, amino acids, antibiotics and antioxidants. They also form an important part of many food delicacies eaten in many parts of the world, especially China, where my parents originally come from. As one who enjoys cooking with mushrooms, I have noticed that out of the thousands of species that exist, only a few species are eaten. This prompted my interest in mushroom foraging and having little experience with identifying mushrooms in the wild, I have come to wonder how people could identify safe and poisonous mushrooms by their physical characteristics. Unfortunately, consuming unsafe mushrooms poses so many health risks and even death, hence it is important to accurately identify them to ensure the health and safety of people and the sustainability of the environment.
+
+The data set was obtained from [Kaggle](https://www.kaggle.com/datasets/uciml/mushroom-classification?resource=download). The data set was originally contributed by the [UCL Machine Learning repository](https://archive.ics.uci.edu/dataset/73/mushroom) and contains 8124 hypothetical mushroom samples that correspond to 23 species of gilled mushrooms in the Agaricus and Lepiota Families. Each species is classified as edible, and poisonous.
+
+## Data Overview
+
+The response variable is distributed such that 4,208 (51.8%) and 3,916 (48.2%) mushrooms were grouped as edible and poisonous, respectively. The data were investigated to identify any potential issues such as missing values, incorrect data entries, duplicate rows, variables with one unique category, and inappropriate data types. One variable was identified with missing values, one other with only a unique category and it was also discovered that all variables were categorical.
+
+-   **Target class Distribution**
+
+![***Figure 1: Class Distribution***](images/clipboard-2689214701.png){fig-align="center" width="761"}
+
+Figure 1 shows the class distribution of edible and poisonous mushrooms. 51.8% belong to the edible class while 48.2% to the poisonous class.
+
+**Bivariate Analysis**
+
+To understand the physical characteristics that can be used to distinguish edible from poisonous mushrooms, a bivariate analysis was performed where a frequency distribution of a physical characteristic was visualised against the target class. To do this, the whole data set was split into train and test sets and the train data was used for exploratory data analysis. Visualisation was done to understand which variables that can separate these two classes.
+
+-   **Mushroom odor**
+
+![***Figure 2: Mushroom odor by target class***](images/clipboard-2157936114.png){fig-align="center" width="789"}
+
+From Figure 2, most of the mushrooms were odorless, 96.3% of them belonged to the edible class while 3.7% were in the poisonous class. Also from Figure 2, we can deduce that the smell of a mushroom determines its edibility. Mushrooms with a good or no smell are mostly edible while those with very bad smells are poisonous.
+
+-   **Mushroom bruises**
+
+![***Figure 3: Mushroom bruises by target class***](images/clipboard-2941790499.png){fig-align="center" width="772"}
+
+The bruises on a mushroom may determine its edibility. Figure 3 shows the distribution of edible and non-edible mushrooms by bruises. From here, most of the mushrooms have no bruises on them. About 81% of the edible mushrooms have bruises on them. For mushrooms without bruises, about 69% of them were classified as poisonous.
+
+-   **Gill attachment**
+
+![***Figure 4: Gill Attachment***](images/clipboard-1830338813.png){fig-align="center" width="751"}
+
+From Figure 4, most of the mushrooms (over 6000) have free gills for attachment with less than a thousand having an attached gill. There's no clear-cut distinction between edible and poisonous mushrooms by their gill attachment. about 51% of them with free gills for attachment were edible while about 49% were poisonous.
+
+-   **Stalk shape**
+
+![***Figure 5: Stalk shape Distribution***](images/clipboard-1504936037.png){fig-align="center" width="746"}
+
+From Figure 5, the shape of the stalk of a mushroom doesn't determine its edibility. Here, we see that mushrooms with enlarging or tapering stalk shapes have almost an equal fraction of them in both classes.
+
+## Methods
+
+To prepare the data for analysis, these identified issues were corrected. Missing values were replaced with a value and categorical variables with two categories were converted to binary variables with 1 representing its presence and 0 its absence.
+
+Similarly, categories with more than two categories were dummy encoded or one-hot encoded depending on the model that will be used. For unpenalized and penalized logistic regression models, dummy encoding was used where one category in the variable was dropped and used as a reference to prevent redundancy. For other models, one-hot encoding was performed where each category was added as a category and dummy encoded where 1 represents the presence of the category and 0 represents its absence.
+
+#### Data splitting and Resampling method
+
+A stratified selection method was used to split the whole data set into training and test sets. Data splitting was done in an 80/20 fashion where 80% belonged to the training data and 20% to the test data. Stratified sampling was done because the task is a classification task and to reduce bias in selection since both classes have an unequal distribution. A 5-fold cross-validation resampling method was used, using the train data. This was used for fine-tuning the parameters of the models and obtaining better performance. In this resampling method, the train data is sampled 5 times and in each iteration, the train data is split into 5 folds, 4/5th-fold is used for fitting a model while the remaining 1/5th-fold is used as validation data to evaluate the performance of the fitted model (Brownlee, 2023).
+
+#### Classification models
+
+Six model types: naive Bayes, unpenalised logistic regression, penalised ridge logistic regression, decision tree, random forests and gradient boosting models, were used.
+
+**Naive Bayes**
+
+This is a probabilistic model that is based on Bayes' theorem. In Bayes' theorem, the probability of an event occurring given the occurrence of another event is obtained. This is known as the conditional probability. However, in naive Bayes, some assumptions are made which are that each feature is independent of the other and has an equal contribution to the outcome.
+
+**Unpenalized Logistic Regression**
+
+This is a type of linear model that is used to estimate the likelihood of an observation belonging to a particular class. It calculates the log odds of an observation by performing a linear combination of all the variables (multiplying the weights or coefficients of a variable with the input value) and bias term (intercept). This log odds is converted to a probability by applying a logit or sigmoid function. Assumptions of independent observations, no presence of extreme outliers, no multicollinearity, and linear relationships between variables and the outcome variable are considered.
+
+**Ridge Logistic Regression**
+
+This is a type of logistic regression where a penalty term is applied to the coefficients of variables causing the coefficients of less important features to be shrunk to zero or towards zero. This penalty is a form of regularization that prevents overfitting. Three major types of regularisation are applied and they include ridge, lasso and elastic net.
+
+**Decision Trees**
+
+This is a method that consists of recursive if/else statements that partition a data set into different child nodes till a terminal or leaf node is reached. It applies a top-to-bottom approach where samples in the whole data set start in a root node.
+
+**Random Forest**
+
+Random forests consist of decision trees that are trained on different subsets of the data. It works on subsets of data and features that are randomly selected. Here, the whole data set is randomly sampled and from the sampled data, variables are randomly selected and the variable that produces the least impurity is selected and used to split the data in the root node into different terminal nodes until the leaf node or a stopping criteria is reached.
+
+**Gradient Boosting**
+
+The gradient boosting model consists of an ensemble of weak learners (for example, decision trees) that work iteratively and sequentially. The performance of the model is based on a chosen loss function which subsequent weak learners try to minimize in each iteration.
+
+#### Recipes
+
+Five recipes were created. The first recipe *rec1* was specific for linear models: unpenalized and ridge logistic regression. In this recipe, dummy variables were created such that one category, which acts as a reference, was dropped from each variable. The second recipe *rec2* was created by one-hot encoding the categorical variables. This was used for the other models not mentioned above. The 3rd-5th recipes, *rec3*, *rec4* and *rec5* originate from *rec2* with an additional step that selects the important features chosen from Lasso logistic regression, decision trees and random forest models as well as the target variable. Lasso logistic regression was used on the basis that it also has feature selection characteristics where it shrinks unimportant features to exactly zero.
+
+#### Evaluation Metric
+
+To select the best model, the accuracy metric will be used. This metric gets the fraction of samples in both classes that were correctly predicted by the model. Other metrics such as recall, specificity, F-measure, Area Under the Receiver's Operating characteristic curve (AUROC) and precision will be used. The recall is the fraction of the class of interest that was accurately identified. The specificity is the fraction of the class of less interest that was correctly identified by the model. The precision is the fraction of the model's predictions belonging to the class of interest, the F-measure is a combination of both recall and precision while the AUROC measures the model's ability to distinguish between classes at different probability thresholds).
+
+## Model Building & Selection
+
+Model development by performed by fine-tuning the parameters of each model (except for unpenalized logistic regression) using the resampled data created from the train data, which uses a 5-fold crossvalidation resampling method. The optimal parameters are a set of parameters with the best accuracy.
+
+For the Naive Bayes model, the *Laplace* and *smoothness* parameters were fine-tuned. From the result, it was found that values of the *smoothness* parameter \<= 0.5 decrease accuracy, irrespective of the *Laplace* value but no change in accuracy for *smoothness* values above 0.5. The optimal parameters for this model are *smoothness = 0.7* and *Laplace = 0.0001.*
+
+For the ridge logistic regression, only the penalty $\lambda$ was tuned. At higher values of $\lambda$, the accuracy decreases. No change was seen for values below 0.05. The optimal $\lambda$ value chosen is 0.03. For the decision tree model, the minimum number of samples in each leaf (min_n) and the cost complexity were tuned. The cost complexity is a form of pruning to prevent overfitting. This parameter has a great effect on the accuracy where at higher values, accuracy decreases and it remains the same irrespective of the chosen minimum number of samples. The best parameters obtained were *cost_complexity = 0.0001, min_n = 2.*
+
+For the random forest model, the number of decision trees, the minimum number of samples in each leaf (min_n) and the number of variables to be sampled (mtry) were tuned. For this model, despite the range of parameters tuned, accuracy (perfect accuracy, ie accuracy = 1) remains the same The optimal values were *trees=100, mtry=5, min_n=5*. For the xgboost model, the number of variables to select (mtry), the number of decision trees (trees), the minimum number of samples in each leaf node (min_n), the tree depth (tree_depth), the learning rate (learn_rate) and the fraction of data to sample (sample_size) were tuned. From the tune results, the learning rate made the most difference as the accuracy remained the same for the other set of parameters. The optimal parameters obtained were *min_n=4*, *mtry=40*, *trees=500*, *tree_depth=3*, *learn_rate=0.1* and *sample_size=0.7.*
+
+| Model                     | Accuracy | Fmeasure | Precision | Recall | ROCAUC | Specificity |
+|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+| Decision Tree             | 1.0000   | 1.0000   | 1.0000    | 1.0000 | 1.0000 | 1.0000      |
+| Random Forest             | 1.0000   | 1.0000   | 1.0000    | 1.0000 | 1.0000 | 1.0000      |
+| XGBoost                   | 0.9997   | 0.9997   | 0.9994    | 1.0000 | 1.0000 | 0.9994      |
+| Logistic Regression       | 0.9978   | 0.9979   | 0.9959    | 1.0000 | 0.9999 | 0.9955      |
+| Ridge Logistic Regression | 0.9978   | 0.9979   | 0.9959    | 1.0000 | 0.9999 | 0.9955      |
+| Naive Bayes               | 0.9714   | 0.9726   | 0.9664    | 0.9789 | 0.9908 | 0.9633      |
+
+: ***Table 1: Model Performance (%) using all variables (from resample data)***
+
+#### Feature Selection
+
+To reduce the number of variables (over 100) after preprocessing, important features obtained from lasso ridge regression, decision trees and random forests were selected and used to reduce computational time.
+
+To obtain the important features in Lasso regression, the optimal $\lambda$ value was obtained and features which weren't exactly zero were selected (only 12 of them). For decision trees, important features were selected after finding the optimal parameters. For random forests, a rather different method was taken. The feature important scores were normalized by dividing by the sum and variables with cumulative sum less than or equal to 80% were selected (only 24 features). These selected features were used to create new recipes and then fit on the resampled data. The performance tables (Tables 2-4) for each selected feature can be seen below.
+
+For Naive Bayes, precision was not available for the features selected by lasso and decision trees. This could be because none of the samples in the positive class was identified.
+
+| Model                     | Accuracy |  Fmeasure | Precision | Recall |    ROCAUC | Specificity |
+|:----------|----------:|----------:|----------:|----------:|----------:|----------:|
+| Decision Tree             | 100.0000 | 100.00000 | 100.00000 |    100 | 100.00000 |   100.00000 |
+| Random Forest             | 100.0000 | 100.00000 | 100.00000 |    100 | 100.00000 |   100.00000 |
+| XGBoost                   |  99.8769 |  99.88157 |  99.76388 |    100 |  99.99858 |    99.74456 |
+| Logistic Regression       |  99.7384 |  99.74820 |  99.49783 |    100 |  99.90729 |    99.45728 |
+| Ridge Logistic Regression |  99.7384 |  99.74820 |  99.49783 |    100 |  99.90729 |    99.45728 |
+| Naive Bayes               |  48.1937 |       NaN |       NaN |      0 |  99.19025 |   100.00000 |
+
+: ***Table 2: Model Performance (%) for features selected by Lasso logistic regression (from resample data)***
+
+| Model                     |  Accuracy |  Fmeasure | Precision | Recall |    ROCAUC | Specificity |
+|:----------|----------:|----------:|----------:|----------:|----------:|----------:|
+| Decision Tree             | 100.00000 | 100.00000 | 100.00000 |    100 | 100.00000 |   100.00000 |
+| Random Forests            | 100.00000 | 100.00000 | 100.00000 |    100 | 100.00000 |   100.00000 |
+| XGBoost                   |  99.90762 |  99.91124 |  99.82327 |    100 |  99.99820 |    99.80831 |
+| Logistic Regression       |  99.73840 |  99.74820 |  99.49783 |    100 |  99.93986 |    99.45728 |
+| Ridge Logistic Regression |  99.73840 |  99.74820 |  99.49783 |    100 |  99.93986 |    99.45728 |
+| Naive Bayes (baseline)    |  48.19370 |       NaN |       NaN |      0 |  98.91315 |   100.00000 |
+
+: ***Table 3: Model Performance (%) with Features selected by Decision trees (from resample data)***
+
+| Model                     |  Accuracy |  Fmeasure | Precision |    Recall |    ROCAUC | Specificity |
+|:----------|----------:|----------:|----------:|----------:|----------:|----------:|
+| Decision Tree             | 100.00000 | 100.00000 | 100.00000 | 100.00000 | 100.00000 |   100.00000 |
+| Random Forest             | 100.00000 | 100.00000 | 100.00000 | 100.00000 | 100.00000 |   100.00000 |
+| XGBoost                   | 100.00000 | 100.00000 | 100.00000 | 100.00000 | 100.00000 |   100.00000 |
+| Logistic Regression       |  98.78414 |  98.84121 |  97.71132 | 100.00000 |  99.81845 |    97.47752 |
+| Ridge Logistic Regression |  98.78414 |  98.84121 |  97.71132 | 100.00000 |  99.81845 |    97.47752 |
+| Naive Bayes               |  98.01459 |  98.09773 |  97.42744 |  98.78188 |  99.08882 |    97.19023 |
+
+: ***Table 4: Model Performance (%) with features selected by Random Forest (from resample data)***
+
+#### Model Selection
+
+From the tables above, decision tree and random forest models performed the best in all feature selection methods and in using all the variables. Next is XGBoost. Performances of the logistic regression models were the same for all the metrics evaluated and for all feature selection methods. However, the baseline model (Naive Bayes) had very good performance scores when all variables and when the random forest selected features were used but very poor performance when features selected by Lasso and decision trees were used. Accuracy score was below 50%, recall 0%, 100% specificity and ROC values above 98%, indicating that none of the class of interest (predicting edible mushrooms) were identified but only samples in the poisonous class were identified. A 100% recall was obtained by all the models except the baseline model, indicating that these models were capable of accurately identifying the positive class. Similarly, these models were also capable of identifying samples in the poisonous class near perfectly (\>99%). XGBoost had perfect scores with features selected by random forests and one-two misclassifications in other feature selection types.
+
+Based on the above metrics, the random forest model will be chosen as the best model over the decision tree model. Although decision trees are simpler models and an easier model to train than random forests, they are prone to overfitting and are susceptible to change when there's a slight change in data. However, random forests try to reduce overfitting by averaging the predictions of a group of decision trees to get a robust prediction.
+
+## Final Model Analysis
+
+To fit on the test data, the random forest model was fit using a set of important features (features with cumulative importance less than or equal to 80%). Twenty-four features were selected as a result. Selecting these features didn't cause any change in performance and they were useful because it reduces computational time for training. Among the top features are features that tell about the smell of the mushroom, gill size, color and spacing and ring type of the ring (Figure 5),
+
+![***Figure 6: Feature Importance***](images/clipboard-3235729658.png){fig-align="center" width="725"}
+
+Table 5 and Figure 6 show the confusion matrix and performance metrics evaluated on the test data. From the result, all poisonous and edible mushrooms were perfectly identified with no false positives or negatives. Hence, this model can be used to identify edible and non-edible mushrooms.
+
+| Metric          | Score |
+|-----------------|-------|
+| True Positive   | 842   |
+| True Negatives  | 784   |
+| False Positives | 0     |
+| False Negatives | 0     |
+
+: ***Table 5: Confusion Matrix of Random forest on test data***
+
+![***Figure 7: Performance Metric for Best Model***](images/clipboard-358793355.png){fig-align="center" width="641"}
+
+From the test performance, we are somewhat confident that this model can be applied in mushroom foraging to classify edible and poisonous mushrooms.
+
+## Conclusion
+
+In this project, I investigated the capabilities machine learning models offer in mushroom foraging to identify safe and non-safe mushrooms. We started by splitting our data into train and test sets; building models using the train data and evaluating their performance on the test data. Data preprocessing steps were done to prepare the data for analysis. A new feature *bad_smell* was created to group odors that indicate bad smell and those that do not. Six machine learning models were fit and evaluated on different subsets of features selected by three models. From the results, all six models performed rather very well when all variables were used and when features from random forests were used. Rather, the baseline model (naive Bayes), performed rather poorly when the features from lasso regression and decision trees were used.
+
+The random forest model was chosen as the best model based on its superiority over decision trees and its robust nature in controlling overfitting since the predictions from different trees are averaged before a class is assigned to an instance. In addition, from the feature importance plot, we see that the odor of a mushroom is one physical characteristic that determines its edibility. Others include gill size, color, and spacing, stalk surface below and above the ring, the ring type, habitat, the spore print color, bruises and stalk shape.
+
+With the insights obtained from the feature importance, mushroom foragers can now focus on those physical characteristics that distinguish edible mushrooms from poisonous ones and in turn promote the health and safety of the environment.
+
+## References
+
+Data source: <https://www.kaggle.com/datasets/uciml/mushroom-classification?resource=download>
+
