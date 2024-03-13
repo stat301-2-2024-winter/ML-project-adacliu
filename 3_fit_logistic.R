@@ -34,7 +34,7 @@ logreg_fit <- logreg_wf %>%
                 metrics=metrics
   )
 
-logreg_fit_metrics <-  logreg_fit %>%
+logreg_fit_metrics <- logreg_fit %>%
   collect_metrics()
 
 
